@@ -78,14 +78,37 @@ impl Board {
         return false
     }
 
+    fn check_for_diagonal_positive(&self, start_index: usize) -> bool {
+        let mut color:Option<Piece>;
+        let mut diagonal_counter:u8;
+        if start_index > 20 && {start_index < 4 || start_index > 6} && {start_index < 11 || start_index > 13} && {start_index < 18 || start_index > 20} && {start_index < 25 || start_index > 27} && {start_index < 32 || start_index > 34} && start_index < 39  {
+            for i in 0..2 {
+                diagonal_counter = 0;
+                if i == 0 {
+                    color = Some(Piece::Red)
+                } else {
+                    color = Some(Piece::Yellow)
+                }
+                for j in 0..4 {
+                    if self.data[start_index - 6 * j] == color {
+                        diagonal_counter += 1;
+                    }
+                    if diagonal_counter == 4 {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
     fn check_for_win(&self) -> bool {
-        let mut win: bool = false;
         for i in 0..42 {
-            if self.check_for_column(i) || self.check_for_row(i) {
+            if self.check_for_column(i) || self.check_for_row(i) || self.check_for_diagonal_positive(i) {
                 return true
             }
         }
-        return win;
+        return false;
     }
 
     fn make_move(&mut self, player: &str) {
