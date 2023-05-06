@@ -29,6 +29,42 @@ impl Board {
         }
     }
 
+    fn check_for_row(&self, start_index: usize) -> bool {
+        let mut color:Option<Piece>;
+        let mut row_counter: u8;
+        if start_index < 3 || {6 < start_index && start_index < 10} || {13 < start_index && start_index < 17} || {20 < start_index && start_index < 24} || {27 < start_index && start_index < 31} || {34 < start_index && start_index < 38} {} 
+        else {
+            for i in 0..2 {
+                row_counter = 0;
+                if i == 0 {
+                    color = Some(Piece::Red);
+                } else {
+                    color = Some(Piece::Yellow);
+                }
+                for j in 0..4 {
+                    if self.data[start_index - j] == color {
+                        row_counter += 1;
+                    }
+                    if row_counter == 4 {
+                        return true
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    fn check_for_win(&self) -> bool {
+        let mut win: bool = false;
+        for i in 0..42 {
+            win = self.check_for_row(41 - i);
+            if win {
+                return win
+            }
+        }
+        return win;
+    }
+
     fn make_move(&mut self, player: &str) {
         println!("\n{player}'s Move:");
         self.print_board_state();
@@ -48,7 +84,7 @@ impl Board {
                 println!("You entered an invalid number.")
             } else {
                 break red_move_int;
-            }
+            };
         };
         println!("{}'s move was {}.", player, player_move);
     
@@ -60,8 +96,8 @@ impl Board {
                     self.data[player_move - 1 + (5 - i) * 7] = Some(Piece::Yellow);
                 };
                 break;
-            }
-        }
+            };
+        };
         self.print_board_state();
     }
 }
@@ -74,8 +110,17 @@ fn main() {
     };
     println!("You have to play with your friend bc im lazy lol");
 
+    loop {
+        board.make_move("Red");
+        if board.check_for_win() {
+            println!("Red Won!");
+            break;
+        }
 
-    board.make_move("Red");
-
-    board.make_move("Yellow")
+        board.make_move("Yellow");
+        if board.check_for_win() {
+            println!("Yellow Won");
+            break;
+        }
+    }
 }
