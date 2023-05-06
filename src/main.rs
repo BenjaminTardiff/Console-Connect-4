@@ -28,6 +28,42 @@ impl Board {
             println!("{}", s);
         }
     }
+
+    fn make_move(&mut self, player: &str) {
+        println!("\n{player}'s Move:");
+        self.print_board_state();
+        println!("What column do you want to put your piece into?");
+
+        let player_move = loop {
+            let mut player_move: String = String::new();
+            io::stdin().read_line(&mut player_move);
+            let player_move = player_move.trim().parse::<usize>();
+    
+            let Ok(red_move_int) = player_move else {
+                println!("player_move is invalid");
+                continue;
+            };
+    
+            if red_move_int > 7 || red_move_int < 1 || self.data[red_move_int - 1] != None {
+                println!("You entered an invalid number.")
+            } else {
+                break red_move_int;
+            }
+        };
+        println!("{}'s move was {}.", player, player_move);
+    
+        for i in 0..6 {
+            if self.data[player_move - 1 + (5 - i) * 7] == None {
+                if player == "Red" {
+                    self.data[player_move - 1 + (5 - i) * 7] = Some(Piece::Red);
+                }   else if player == "Yellow" {
+                    self.data[player_move - 1 + (5 - i) * 7] = Some(Piece::Yellow);
+                };
+                break;
+            }
+        }
+        self.print_board_state();
+    }
 }
 
 fn main() {
@@ -36,36 +72,10 @@ fn main() {
     let mut board = Board {
         data: [EMPTY_PIECE; 42],
     };
-    println!("You have to play with your friend bc im lazy lol\n");
-    println!("Red's Move:");
+    println!("You have to play with your friend bc im lazy lol");
 
-    board.print_board_state();
-    println!("What column do you want to put your piece into?");
 
-    let red_move = loop {
-        let mut red_move: String = String::new();
-        io::stdin().read_line(&mut red_move);
-        let red_move = red_move.trim().parse::<usize>();
+    board.make_move("Red");
 
-        let Ok(red_move_int) = red_move else {
-            println!("red_move is invalid");
-            continue;
-        };
-
-        if red_move_int > 7 || red_move_int < 1 || board.data[red_move_int - 1] != EMPTY_PIECE {
-            println!("You entered an invalid number.")
-        } else {
-            break red_move_int;
-        }
-    };
-    println!("Red's move was {}.", red_move);
-
-    for i in 0..6 {
-        if board.data[red_move - 1 + (5 - i) * 7] == EMPTY_PIECE {
-            board.data[red_move - 1 + (5 - i) * 7] = Some(Piece::Red);
-            break;
-        }
-    }
-
-    board.print_board_state();
+    board.make_move("Yellow")
 }
