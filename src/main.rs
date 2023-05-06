@@ -54,12 +54,35 @@ impl Board {
         return false;
     }
 
+    fn check_for_column(&self, start_index: usize) -> bool {
+        let mut color:Option<Piece>;
+        let mut column_counter: u8;
+        if start_index > 20 {
+            for i in 0..2 {
+                column_counter = 0;
+                if i == 0 {
+                    color = Some(Piece::Red)
+                } else {
+                    color = Some(Piece::Yellow)
+                }
+                for j in 0..4 {
+                    if self.data[start_index - j * 7] == color {
+                        column_counter += 1;
+                    }
+                    if column_counter == 4 {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
     fn check_for_win(&self) -> bool {
         let mut win: bool = false;
         for i in 0..42 {
-            win = self.check_for_row(41 - i);
-            if win {
-                return win
+            if self.check_for_column(i) || self.check_for_row(i) {
+                return true
             }
         }
         return win;
